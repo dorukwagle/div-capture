@@ -1,7 +1,9 @@
 let scriptSrc =
-  "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js";
+  "https://cdnjs.cloudflare.com/ajax/libs/dom-to-image-more/3.3.0/dom-to-image-more.min.js";
 let elementId = "";
 let fileName = "";
+let scale = 4;
+
 let css = `.doruk-btn-6785 {
   align-items: center;
   background-image: linear-gradient(144deg,#AF40FF, #5B42F3 50%,#00DDEB);
@@ -66,17 +68,21 @@ let injectCallback = () => {
   );
   btn.addEventListener("click", () => {
     let element = document.getElementById("${elementId}");
-    html2canvas(element, {
-      scale: 2,
-      dpi:144,
-      onrendered: function (canvas) {
-        var imgageData = canvas.toDataURL("image/webp", 1.0);
+    domtoimage.toCanvas(element, {
+    width: element.clientWidth * ${scale},
+    height: element.clientHeight * ${scale},
+    style: {
+      transform: "scale(" + scale + ")",
+      transformOrigin: "top left"
+    }
+  })
+      .then(function (canvas) {
+        let dataUrl = canvas.toDataURL('image/png');
         var a = document.createElement("a");
-        a.href = imgageData; //Image Base64 Goes here
+        a.href = dataUrl; //Image Base64 Goes here
         a.download = "${fileName}"; //File name Here
         a.click(); //Downloaded file
-      },
-    });
+      });
   });`;
 
   let callbackScript = document.createElement("script");
